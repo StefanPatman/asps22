@@ -6,6 +6,7 @@ from time import time, sleep
 from math import sin, pi
 from random import uniform
 from hashlib import sha1
+from os import getenv
 
 
 
@@ -67,18 +68,11 @@ def data():
 
 
 def main(port):
-    app.run(port=port, debug=True)
+    app.run(port=port, host='0.0.0.0', debug=True)
 
 
 if __name__ == '__main__':
-
-    q = ArgumentParser(description='ASPS Aggregator')
-    q.add_argument(
-        '-p',
-        '--port',
-        type = int,
-        default = 5001,
-        help = 'Aggregator listen port'
+    kwargs = dict(
+            port = int(getenv('PORT', 5001)),
     )
-    kwargs = vars(q.parse_args())
     main(**kwargs)

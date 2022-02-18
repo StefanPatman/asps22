@@ -4,6 +4,8 @@ from time import time, sleep
 from math import sin, pi
 from random import uniform
 from hashlib import sha1
+from os import getenv
+from socket import gethostbyname
 
 DAY = 86400
 
@@ -13,8 +15,8 @@ def hash(string):
 
 
 class Processor:
-    def __init__(self, ip, port):
-        self.ip = ip
+    def __init__(self, host, port):
+        self.ip = gethostbyname(host)
         self.port = port
         self.route = 'listen'
 
@@ -49,12 +51,12 @@ class Generator:
     def post(self):
         temp = self.temperature()
         print(temp)
-        #post(self.processor.url(), json={
-        #    'id': self.id,
-        #    'location': self.location,
-        #    'temperature': temp,
-        #    'timestamp': time(),
-        #})
+        post(self.processor.url(), json={
+           'id': self.id,
+           'location': self.location,
+           'temperature': temp,
+           'timestamp': time(),
+        })
 
 
 def main(processor, port, location, interval, id):
@@ -63,7 +65,7 @@ def main(processor, port, location, interval, id):
     g.location = location
     g.interval = interval
     g.id = id
-
+    sleep(1)
     while True:
         g.post()
         sleep(g.interval)
@@ -71,37 +73,11 @@ def main(processor, port, location, interval, id):
 
 
 if __name__ == "__main__":
-    q = ArgumentParser(description='ASPS Generator')
-    q.add_argument(
-        '-p',
-        '--processor',
-        metavar = 'IP:PORT',
-        type = str,
-        default = '127.0.0.1:5000',
-        help = 'Processor to post data'
+    kwargs = dict(
+            port = int(getenv('PORT', 5000)),
+            processor = getenv('PROCESSOR', 'localhost'),
+            location = getenv('LOCATION', 'Athens'),
+            interval = int(getenv('INTERVAL', 1)),
+            id = int(getenv('ID', 1)),
     )
-    q.add_argument(
-        '-l',
-        '--location',
-        metavar = 'LOCATION',
-        type = str,
-        default = 'Athens',
-        help = 'Generator location'
-    )
-    q.add_argument(
-        '-i',
-        '--id',
-        type = int,
-        default = 1,
-        help = 'Generator unique id'
-    )
-    q.add_argument(
-        '-t',
-        '--interval',
-        type = int,
-        default = 1,
-        help = 'Post interval'
-    )
-    kwargs = vars(q.parse_args())
-    kwargs['processor'], kwargs['port'] = kwargs['processor'].split(':')
     main(**kwargs)

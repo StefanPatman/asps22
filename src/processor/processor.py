@@ -6,10 +6,14 @@ from time import time, sleep
 from math import sin, pi
 from random import uniform
 from hashlib import sha1
+from os import getenv
+from socket import gethostbyname
+
+
 
 class Aggregator:
-    def __init__(self, ip, port):
-        self.ip = ip
+    def __init__(self, host, port):
+        self.ip = gethostbyname(host)
         self.port = port
         self.route = 'listen'
 
@@ -69,34 +73,14 @@ def listen():
 def main(aggregator, a_port, t, port):
     p.aggregator = Aggregator(aggregator, a_port)
     p.t = t
-    app.run(port=port, debug=True)
+    app.run(port=port, host='processor', debug=True)
 
 
 if __name__ == '__main__':
-
-    q = ArgumentParser(description='ASPS Processor')
-    q.add_argument(
-        '-a',
-        '--aggregator',
-        metavar = 'IP:PORT',
-        type = str,
-        default = '127.0.0.1:5001',
-        help = 'Aggregator to post data'
+    kwargs = dict(
+            port = int(getenv('PORT', 5000)),
+            a_port = int(getenv('A_PORT', 5001)),
+            aggregator = getenv('AGGREGATOR', 'localhost'),
+            t = getenv('T', 10),
     )
-    q.add_argument(
-        '-t',
-        '--t',
-        type = int,
-        default = 100,
-        help = 'Aggregation period'
-    )
-    q.add_argument(
-        '-p',
-        '--port',
-        type = int,
-        default = 5000,
-        help = 'Processor listen port'
-    )
-    kwargs = vars(q.parse_args())
-    kwargs['aggregator'], kwargs['a_port'] = kwargs['aggregator'].split(':')
     main(**kwargs)
