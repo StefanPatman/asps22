@@ -66,7 +66,7 @@ def listen():
     id = int(data['id'])
     print(temperature, location, id, timestamp)
     p.listen(id, data)
-    print(p.elements)
+    # print(p.elements)
 
     return {}
 

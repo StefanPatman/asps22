@@ -19,28 +19,19 @@ class Aggregator:
             self.elements[id] = []
             self.locations[id] = data['location']
         self.elements[id].append(data)
-        print(self.elements)
+        # print(self.elements)
     def list_id(self, id):
         data = self.elements.get(int(id))
-        print('AAAaaaaaAaAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', id, data)
         if data is None:
             return "No such id"
         return jsonify(data)
     def list_location(self, location):
-        # ids = []
-        # for id in self.locations.keys():
-        #     if self.locations[id] == location:
-        #         ids.append(self.elements[id])
         data = [self.elements[id] for id in self.locations.keys()
                 if self.locations[id]==location]
         return jsonify(data)
 
 
-
-
 a = Aggregator()
-
-
 app = Flask(__name__)
 
 @app.route('/listen', methods = ['POST'])
@@ -53,7 +44,7 @@ def listen():
     id = int(data['id'])
     print(temperature, location, id, timestamp)
     a.listen(id, data)
-    print(a.elements)
+    # print(a.elements)
     return {}
 
 @app.route('/data', methods = ['POST','GET'])

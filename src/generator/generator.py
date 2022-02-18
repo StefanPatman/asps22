@@ -65,9 +65,11 @@ def main(processor, port, location, interval, id):
     g.location = location
     g.interval = interval
     g.id = id
-    sleep(1)
     while True:
-        g.post()
+        try:
+            g.post()
+        except Exception:
+            print('Failed to connect')
         sleep(g.interval)
 
 
