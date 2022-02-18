@@ -49,12 +49,12 @@ class Generator:
     def post(self):
         temp = self.temperature()
         print(temp)
-        post(self.processor.url(), json={
-            'id': self.id,
-            'location': self.location,
-            'temperature': temp,
-            'timestamp': time(),
-        })
+        #post(self.processor.url(), json={
+        #    'id': self.id,
+        #    'location': self.location,
+        #    'temperature': temp,
+        #    'timestamp': time(),
+        #})
 
 
 def main(processor, port, location, interval, id):
@@ -71,8 +71,8 @@ def main(processor, port, location, interval, id):
 
 
 if __name__ == "__main__":
-    p = ArgumentParser(description='ASPS Generator')
-    p.add_argument(
+    q = ArgumentParser(description='ASPS Generator')
+    q.add_argument(
         '-p',
         '--processor',
         metavar = 'IP:PORT',
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         default = '127.0.0.1:5000',
         help = 'Processor to post data'
     )
-    p.add_argument(
+    q.add_argument(
         '-l',
         '--location',
         metavar = 'LOCATION',
@@ -88,20 +88,20 @@ if __name__ == "__main__":
         default = 'Athens',
         help = 'Generator location'
     )
-    p.add_argument(
+    q.add_argument(
         '-i',
         '--id',
         type = int,
         default = 1,
         help = 'Generator unique id'
     )
-    p.add_argument(
+    q.add_argument(
         '-t',
         '--interval',
         type = int,
         default = 1,
         help = 'Post interval'
     )
-    kwargs = vars(p.parse_args())
+    kwargs = vars(q.parse_args())
     kwargs['processor'], kwargs['port'] = kwargs['processor'].split(':')
     main(**kwargs)
