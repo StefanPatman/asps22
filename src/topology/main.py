@@ -1,5 +1,6 @@
-from srds import ConstantSampler
 
+from yaml import safe_load
+from sys import argv
 import matplotlib.pyplot as plt
 
 from ether.core import Connection, Node, Capacity
@@ -10,16 +11,13 @@ from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
 
-default_num_cells = 1
-default_cell_density = ConstantSampler(10)
-
 
 def create_generator_node(name=None) -> Node:
 
     name = name if name is not None else f'generator_{next(counters["generator"])}'
 
     return create_node(name=name,
-                       cpus=88, arch='x86', mem='188G',
+                       cpus=1, arch='arm32', mem='512M',
                        labels={
                            'ether.edgerun.io/type': 'server',
                            'ether.edgerun.io/model': 'server'
@@ -31,7 +29,7 @@ def create_aggregator_node(name=None) -> Node:
     name = name if name is not None else f'aggregator_{next(counters["aggregator"])}'
 
     return create_node(name=name,
-                       cpus=88, arch='x86', mem='188G',
+                       cpus=4, arch='x86', mem='2G',
                        labels={
                            'ether.edgerun.io/type': 'server',
                            'ether.edgerun.io/model': 'server'
@@ -44,7 +42,7 @@ def create_processor_node(name=None) -> Node:
     name = name if name is not None else f'processor_{next(counters["processor"])}'
 
     return create_node(name=name,
-                       cpus=88, arch='x86', mem='188G',
+                       cpus=8, arch='x86', mem='16G',
                        labels={
                            'ether.edgerun.io/type': 'server',
                            'ether.edgerun.io/model': 'server'
@@ -73,41 +71,34 @@ class Factory(LANCell):
 
 
 class CustomIoTScenario:
-    def __init__(self, num_premises=default_num_cells, premises_density=default_cell_density,
-                 internet='internet') -> None:
-        """
-        The IIoT scenarios with several factories, that have a factory floor with IoT devices and a on-premises managed
-        cloudlet.
+    """Create all factories for one city"""
+    def __init__(self, factories, internet='internet') -> None:
 
-        :param num_premises: the number of premises, each premises is a factory with a floor and a cloudlet
-        :param premises_density: currently not used, but the idea is that the total number of devices on a premises vary
-        according to the parameter. but it's unclear how the total number of devices should be split among the floor and
-        the cloudlet.
-        :param internet:
-        """
         super().__init__()
-        self.num_premises = num_premises
-        self.premises_density = premises_density
+        self.factories = factories
         self.internet = internet
 
     def materialize(self, topology: Topology):
-        for _ in range(self.num_premises):
-            floor_compute = IoTComputeBox(nodes=[create_processor_node])
+        for factory, floors in self.factories.items():
 
-            factory = LANCell([floor_compute], backhaul=BusinessIsp(self.internet))
+            processor = IoTComputeBox(nodes=[create_processor_node])
+            factory = LANCell([processor], backhaul=BusinessIsp(self.internet))
             factory.materialize(topology)
 
-            cloudlet = Factory({1:1, 2:2, 3:3}, backhaul=UpDownLink(10000, 10000, backhaul=factory.switch))
+            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=factory.switch))
             cloudlet.materialize(topology)
 
 
-def main():
+def main(input):
     topology = Topology()
 
-    CustomIoTScenario(num_premises=2, internet='internet_chix').materialize(topology)
-    CustomIoTScenario(num_premises=2, internet='internet_nyc').materialize(topology)
+    for city, factories in input.items():
+        CustomIoTScenario(factories, internet='internet').materialize(topology)
 
-    topology.add_connection(Connection('internet_chix', 'internet_nyc', 10))
+    # CustomIoTScenario(num_premises=2, internet='internet_chix').materialize(topology)
+    # CustomIoTScenario(num_premises=2, internet='internet_nyc').materialize(topology)
+
+    # topology.add_connection(Connection('internet_chix', 'internet_nyc', 10))
 
     draw_basic(topology)
     fig = plt.gcf()
@@ -116,4 +107,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    file = argv[1]
+    with open(file) as stream:
+        input = safe_load(stream)
+    main(input)

@@ -1,0 +1,12 @@
+Athens:
+  Factory1:
+    Flooo1: 4
+    Flooo2: 2
+    Flooo3: 3
+  Factory2:
+    Flooo1: 7
+    Flooo2: 5
+Barcha:
+  FactoryA:
+    Flooo1: 11
+    Flooo3: 2
