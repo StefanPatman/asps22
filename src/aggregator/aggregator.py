@@ -48,7 +48,7 @@ class Aggregator:
         return data
     def post(self, data):
         print(data)
-        post(self.aggregator.url(), json=data)
+        post(self.processor.url(), json=data)
 
 
 

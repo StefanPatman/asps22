@@ -14,7 +14,7 @@ def hash(string):
     return int(sha1(string.encode('utf-8')).hexdigest(), 16)
 
 
-class Processor:
+class Aggregator:
     def __init__(self, host, port):
         self.ip = gethostbyname(host)
         self.port = port
@@ -35,7 +35,7 @@ class Generator:
     FACTOR = 10
 
     def __init__(self):
-        self.processor = Processor('127.0.0.1', 5000)
+        self.aggregator = Aggregator('127.0.0.1', 5000)
         self.location = 'Athens'
         self.interval = 1  # seconds
         self.id = 1
@@ -51,7 +51,7 @@ class Generator:
     def post(self):
         temp = self.temperature()
         print(temp)
-        post(self.processor.url(), json={
+        post(self.aggregator.url(), json={
            'id': self.id,
            'location': self.location,
            'temperature': temp,
@@ -59,9 +59,9 @@ class Generator:
         })
 
 
-def main(processor, port, location, interval, id):
+def main(aggregator, port, location, interval, id):
     g = Generator()
-    g.processor = Processor(processor, port)
+    g.aggregator = Aggregator(aggregator, port)
     g.location = location
     g.interval = interval
     g.id = id
@@ -77,7 +77,7 @@ def main(processor, port, location, interval, id):
 if __name__ == "__main__":
     kwargs = dict(
             port = int(getenv('PORT', 5000)),
-            processor = getenv('PROCESSOR', 'localhost'),
+            aggregator = getenv('AGGREGATOR', 'localhost'),
             location = getenv('LOCATION', 'Athens'),
             interval = int(getenv('INTERVAL', 1)),
             id = int(getenv('ID', 1)),
