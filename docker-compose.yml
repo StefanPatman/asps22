@@ -5,29 +5,29 @@ services:
     image: generator
     environment:
       - INTERVAL=1
-      - PROCESSOR=processor
+      - AGGREGATOR=aggregator
       - PORT=5000
 
   generator_2:
     image: generator
     environment:
       - INTERVAL=1
-      - PROCESSOR=processor
+      - AGGREGATOR=aggregator
       - PORT=5000
       - LOCATION=Barcha
       - ID=2
 
-  processor:
-    image: processor
+  aggregator:
+    image: aggregator
     environment:
-      - A_PORT=5001
-      - AGGREGATOR=aggregator
+      - PROCESSOR_PORT=5001
+      - PROCESSOR=processor
       - PORT=5000
     ports:
       - "5000:5000"
 
-  aggregator:
-    image: aggregator
+  processor:
+    image: processor
     environment:
       - PORT=5001
     ports:

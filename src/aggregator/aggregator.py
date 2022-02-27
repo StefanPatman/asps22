@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 import logging
 from argparse import ArgumentParser
@@ -7,31 +8,53 @@ from math import sin, pi
 from random import uniform
 from hashlib import sha1
 from os import getenv
+from socket import gethostbyname
 
 
+
+class Processor:
+    def __init__(self, host, port):
+        self.ip = gethostbyname(host)
+        self.port = port
+        self.route = 'listen'
+
+    def url(self):
+        return f'http://{self.ip}:{self.port}/{self.route}'
 
 class Aggregator:
     def __init__(self):
+        self.t = 100
         self.elements = {}
-        self.locations = {}
     def listen(self, id, data):
         if self.elements.get(id) is None:
             self.elements[id] = []
-            self.locations[id] = data['location']
         self.elements[id].append(data)
-        # print(self.elements)
-    def list_id(self, id):
-        data = self.elements.get(int(id))
-        if data is None:
-            return "No such id"
-        return jsonify(data)
-    def list_location(self, location):
-        data = [self.elements[id] for id in self.locations.keys()
-                if self.locations[id]==location]
-        return jsonify(data)
+        if len(self.elements[id]) >= self.t :
+            d = self.condense(id)
+            self.post(d)
+    def condense(self, id):
+        s = 0
+        s = sum(x['temperature'] for x in self.elements[id])
+        l = len(self.elements[id])
+        median = s/l
+        last = self.elements[id][-1]
+        data = {
+            'location' : last['location'],
+            'timestamp' : last['timestamp'],
+            'temperature' : median,
+            'id' : id,
+        }
+        self.elements[id] = []
+        return data
+    def post(self, data):
+        print(data)
+        post(self.aggregator.url(), json=data)
 
 
-a = Aggregator()
+
+p = Aggregator()
+
+
 app = Flask(__name__)
 
 @app.route('/listen', methods = ['POST'])
@@ -43,27 +66,22 @@ def listen():
     timestamp = data['timestamp']
     id = int(data['id'])
     print(temperature, location, id, timestamp)
-    a.listen(id, data)
-    # print(a.elements)
+    p.listen(id, data)
+    # print(p.elements)
+
     return {}
 
-@app.route('/data', methods = ['POST','GET'])
-def data():
-    id = request.args.get('id')
-    location = request.args.get('location')
-    if id is not None:
-        return a.list_id(id)
-    elif location is not None:
-        return a.list_location(location)
-    return "error"
-
-
-def main(port):
-    app.run(port=port, host='0.0.0.0', debug=True)
+def main(processor, a_port, t, port):
+    p.processor = Processor(processor, a_port)
+    p.t = t
+    app.run(port=port, host='aggregator', debug=True)
 
 
 if __name__ == '__main__':
     kwargs = dict(
-            port = int(getenv('PORT', 5001)),
+            port = int(getenv('PORT', 5000)),
+            a_port = int(getenv('PROCESSOR_PORT', 5001)),
+            processor = getenv('PROCESSOR', 'localhost'),
+            t = getenv('T', 10),
     )
     main(**kwargs)
