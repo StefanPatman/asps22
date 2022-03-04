@@ -40,8 +40,8 @@ class Aggregator:
         last = self.elements[id][-1]
         data = {
             'location' : last['location'],
-            'timestamp_last_sent' : last['timestamp_sent'],
-            'timestamp_last_received' : last['timestamp_received'],
+            'timestamp_last_generated' : last['timestamp_generated'],
+            'timestamp_last_aggregated' : last['timestamp_aggregated'],
             'timestamp_computed': time(),
             'temperature' : median,
             'id' : id,
@@ -63,7 +63,7 @@ app = Flask(__name__)
 def listen():
     logging.info('Enter')
     data = request.get_json()
-    data['timestamp_received'] = time()
+    data['timestamp_aggregated'] = time()
     id = int(data['id'])
     print(data)
     p.listen(id, data)

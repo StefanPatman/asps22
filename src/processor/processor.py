@@ -39,6 +39,7 @@ def listen():
     logging.info('Enter')
     data = request.get_json()
     data['timestamp_processed'] = time()
+    id = int(data['id'])
     print(data)
     a.listen(id, data)
     # print(a.elements)
