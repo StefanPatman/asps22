@@ -38,11 +38,8 @@ app = Flask(__name__)
 def listen():
     logging.info('Enter')
     data = request.get_json()
-    temperature = data['temperature']
-    location = data['location']
-    timestamp = data['timestamp']
-    id = int(data['id'])
-    print(temperature, location, id, timestamp)
+    data['timestamp_processed'] = time()
+    print(data)
     a.listen(id, data)
     # print(a.elements)
     return {}

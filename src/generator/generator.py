@@ -55,7 +55,7 @@ class Generator:
            'id': self.id,
            'location': self.location,
            'temperature': temp,
-           'timestamp': time(),
+           'timestamp_sent': time(),
         })
 
 
