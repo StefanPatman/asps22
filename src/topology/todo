@@ -1,0 +1,9 @@
+
+ΣΥΝΤΑΓΗ ΔΗΜΙΟΥΡΓΙΑΣ SERVICES
+ΠΩΣ ΘΑ ΠΑΙΡΝΩ ΓΙΑ ΚΑΘΕ GENERATOR/AGGREGATOR ΤΟΝ ΜΠΑΜΠΑ
+
+
+
+class Factory: must include Processor node creation
+modify materialize to tag nodes with connections
+pass services and env vars to each create_node recipe

@@ -14,14 +14,19 @@ from ether.vis import draw_basic
 
 def create_generator_node(name=None) -> Node:
 
-    name = name if name is not None else f'generator_{next(counters["generator"])}'
+    id = next(counters["generator"])
+    name = name if name is not None else f'generator_{id}'
 
-    return create_node(name=name,
+    node = create_node(name=name,
                        cpus=1, arch='arm32', mem='512M',
                        labels={
                            'ether.edgerun.io/type': 'server',
                            'ether.edgerun.io/model': 'server'
                        })
+    node.service = 'generator'
+    node.id = id
+    node.aggregator_node = ...
+    return node
 
 
 def create_aggregator_node(name=None) -> Node:
@@ -70,8 +75,8 @@ class Factory(LANCell):
         return _create_rack
 
 
-class CustomIoTScenario:
-    """Create all factories for one city"""
+class City:
+    """Contains all factories for one city"""
     def __init__(self, factories, internet='internet') -> None:
 
         super().__init__()
@@ -79,13 +84,20 @@ class CustomIoTScenario:
         self.internet = internet
 
     def materialize(self, topology: Topology):
+
+        city = LANCell([], backhaul=BusinessIsp(self.internet))
+        city.materialize(topology)
+
+
         for factory, floors in self.factories.items():
 
-            processor = IoTComputeBox(nodes=[create_processor_node])
-            factory = LANCell([processor], backhaul=BusinessIsp(self.internet))
-            factory.materialize(topology)
+            # factory = LANCell([create_processor_node], backhaul=BusinessIsp(self.internet))
+            # factory.materialize(topology)
+            #
+            # cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=factory.switch))
+            # cloudlet.materialize(topology)
 
-            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=factory.switch))
+            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch))
             cloudlet.materialize(topology)
 
 
@@ -93,7 +105,7 @@ def main(input):
     topology = Topology()
 
     for city, factories in input.items():
-        CustomIoTScenario(factories, internet='internet').materialize(topology)
+        City(factories, internet='internet').materialize(topology)
 
     # CustomIoTScenario(num_premises=2, internet='internet_chix').materialize(topology)
     # CustomIoTScenario(num_premises=2, internet='internet_nyc').materialize(topology)
@@ -104,6 +116,16 @@ def main(input):
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
     plt.show()  # display
+
+    # for n in topology.get_nodes():
+    #     for j in topology.get_nodes():
+    #         if type(n) == Node and type(j) == Node and n != j:
+    #              bandwidth = min([k.bandwidth for k in topology.route(n, j).hops])
+    #              latency = round(float(topology.route(n, j).rtt/2), 2)
+    #              print(n,j,bandwidth,latency)
+
+    return topology
+
 
 
 if __name__ == '__main__':
