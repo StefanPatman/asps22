@@ -12,33 +12,50 @@ from ether.topology import Topology
 from ether.vis import draw_basic
 
 
-def create_generator_node(name=None) -> Node:
+class Floor(LANCell):
 
-    id = next(counters["generator"])
-    name = name if name is not None else f'generator_{id}'
+    def __init__(self, factory, generator_count, backhaul=None) -> None:
+        self.factory = factory
+        self.generator_count = generator_count
+        generator_nodes = [self._create_generator_node] * generator_count
+        super().__init__([self._create_aggregator_node] + generator_nodes, backhaul=backhaul)
 
-    node = create_node(name=name,
-                       cpus=1, arch='arm32', mem='512M',
-                       labels={
-                           'ether.edgerun.io/type': 'server',
-                           'ether.edgerun.io/model': 'server'
-                       })
-    node.service = 'generator'
-    node.id = id
-    node.aggregator_node = ...
-    return node
+    def _create_identity(self):
+        self.nr = next(counters['floor'])
+        self.name = f'floor_{self.nr}'
+        self.switch = f'switch_{self.name}'
+        self.aggregator_id = next(counters["aggregator"])
+        self.aggregator_name = f'aggregator_{self.aggregator_id}'
 
+    def _create_aggregator_node(self) -> Node:
 
-def create_aggregator_node(name=None) -> Node:
+        return create_node(
+            name=self.aggregator_name,
+            cpus=4, arch='x86', mem='2G',
+            labels={
+                'ether.edgerun.io/type': 'server',
+                'ether.edgerun.io/model': 'server',
+                'asps.service': 'aggregator',
+                'asps.processor': self.factory.processor_name,
+                'asps.id': self.aggregator_id,
+        })
 
-    name = name if name is not None else f'aggregator_{next(counters["aggregator"])}'
+    def _create_generator_node(self) -> Node:
 
-    return create_node(name=name,
-                       cpus=4, arch='x86', mem='2G',
-                       labels={
-                           'ether.edgerun.io/type': 'server',
-                           'ether.edgerun.io/model': 'server'
-                       })
+        id = next(counters["generator"])
+        name = f'generator_{id}'
+
+        node = create_node(
+            name=name,
+            cpus=1, arch='arm32', mem='512M',
+            labels={
+                'ether.edgerun.io/type': 'server',
+                'ether.edgerun.io/model': 'server',
+                'asps.service': 'generator',
+                'asps.aggregator': self.aggregator_name,
+                'asps.id': id,
+            })
+        return node
 
 
 class Factory(LANCell):
@@ -54,44 +71,24 @@ class Factory(LANCell):
         self.nr = next(counters['factory'])
         self.name = f'factory_{self.nr}'
         self.switch = f'switch_{self.name}'
-        self.processor = f'processor_{next(counters["processor"])}'
+        self.processor_id = next(counters["processor"])
+        self.processor_name = f'processor_{self.processor_id}'
 
     def _create_processor_node(self) -> Node:
         return create_node(
-            name=self.processor,
+            name=self.processor_name,
             cpus=8, arch='x86', mem='16G',
             labels={
             'ether.edgerun.io/type': 'server',
-            'ether.edgerun.io/model': 'server'
+            'ether.edgerun.io/model': 'server',
+            'asps.service': 'processor',
+            'asps.id': self.processor_id,
         })
 
     def _create_rack_gen(self, generators):
         def _create_rack():
-            return LANCell([create_generator_node] * generators + [create_aggregator_node], backhaul=self.switch)
+            return Floor(self, generators, backhaul=self.switch)
         return _create_rack
-
-
-    # def materialize(self, topology: Topology, parent=None):
-    #     self._create_identity()
-    #
-    #     for cell in self.nodes:
-    #         self._materialize(topology, cell, self.switch)
-    #
-    #     if self.backhaul:
-    #         if isinstance(self.backhaul, UpDownLink):
-    #             uplink = Link(self.backhaul.bw_up, tags={'type': 'uplink', 'name': 'up_%s' % self.name})
-    #             downlink = Link(self.backhaul.bw_down, tags={'type': 'downlink', 'name': 'down_%s' % self.name})
-    #
-    #             topology.add_connection(Connection(self.switch, uplink, latency_dist=self.backhaul.latency_dist),
-    #                                     directed=True)
-    #             topology.add_connection(Connection(downlink, self.switch), directed=True)
-    #
-    #             topology.add_connection(Connection(self.backhaul.backhaul, downlink,
-    #                                                latency_dist=self.backhaul.latency_dist), directed=True)
-    #             topology.add_connection(Connection(uplink, self.backhaul.backhaul), directed=True)
-    #
-    #         else:
-    #             topology.add_connection(Connection(self.switch, self.backhaul, latency_dist=latency.lan))
 
 
 class City:
