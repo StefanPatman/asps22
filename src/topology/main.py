@@ -1,5 +1,5 @@
 
-from yaml import safe_load
+from yaml import safe_load, dump
 from sys import argv
 import matplotlib.pyplot as plt
 
@@ -110,6 +110,73 @@ class City:
             cloudlet.materialize(topology)
 
 
+def create_service_generator(node):
+    id = node.labels['asps.id']
+    aggregator = node.labels['asps.aggregator']
+    return {
+        'image': 'generator',
+        'environment': [
+            'INTERVAL=1',
+            f'AGGREGATOR={aggregator}',
+            'PORT=5002',
+            'LOCATION=Athens',
+            f'ID={id}',
+        ]
+    }
+
+
+def create_service_aggregator(node):
+    id = node.labels['asps.id']
+    processor = node.labels['asps.processor']
+    return {
+        'image': 'aggregator',
+        'environment': [
+            f'PROCESSOR={processor}',
+            'PROCESSOR_PORT=5003',
+            f'ID={id}',
+        ],
+        'ports': [
+            '5000:5002'
+        ]
+    }
+
+
+def create_service_processor(node):
+    id = node.labels['asps.id']
+    return {
+        'image': 'processor',
+        'environment': [
+            'PORT=5003',
+            f'ID={id}',
+        ],
+        'ports': [
+            '5001:5003'
+        ]
+    }
+
+
+def create_service(node):
+    service_name = node.labels['asps.service']
+    return {
+        'generator': create_service_generator,
+        'aggregator': create_service_aggregator,
+        'processor': create_service_processor,
+    }[service_name](node)
+
+
+def create_config(topology):
+    config = dict()
+    config['version'] = '3.7'
+
+    services = dict()
+    for n in topology.get_nodes():
+        if type(n) == Node:
+            services[n.name] = create_service(n)
+    config['services'] = services
+
+    print(dump(config))
+
+
 def main(input):
     topology = Topology()
 
@@ -124,7 +191,7 @@ def main(input):
     draw_basic(topology)
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
-    plt.show()  # display
+    # plt.show()  # display
 
     # for n in topology.get_nodes():
     #     for j in topology.get_nodes():
@@ -132,6 +199,8 @@ def main(input):
     #              bandwidth = min([k.bandwidth for k in topology.route(n, j).hops])
     #              latency = round(float(topology.route(n, j).rtt/2), 2)
     #              print(n,j,bandwidth,latency)
+
+    create_config(topology)
 
     return topology
 
