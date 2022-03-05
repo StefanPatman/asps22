@@ -41,20 +41,6 @@ def create_aggregator_node(name=None) -> Node:
                        })
 
 
-
-def create_processor_node(name=None) -> Node:
-
-    name = name if name is not None else f'processor_{next(counters["processor"])}'
-
-    return create_node(name=name,
-                       cpus=8, arch='x86', mem='16G',
-                       labels={
-                           'ether.edgerun.io/type': 'server',
-                           'ether.edgerun.io/model': 'server'
-                       })
-
-
-
 class Factory(LANCell):
 
     def __init__(self, generators_per_floor, backhaul=None) -> None:
@@ -62,17 +48,50 @@ class Factory(LANCell):
             self._create_rack_gen(generators)
             for floor, generators in generators_per_floor.items()
         ]
-        super().__init__(cloudlet_nodes, backhaul=backhaul)
+        super().__init__([self._create_processor_node] + cloudlet_nodes, backhaul=backhaul)
 
     def _create_identity(self):
         self.nr = next(counters['factory'])
         self.name = f'factory_{self.nr}'
         self.switch = f'switch_{self.name}'
+        self.processor = f'processor_{next(counters["processor"])}'
+
+    def _create_processor_node(self) -> Node:
+        return create_node(
+            name=self.processor,
+            cpus=8, arch='x86', mem='16G',
+            labels={
+            'ether.edgerun.io/type': 'server',
+            'ether.edgerun.io/model': 'server'
+        })
 
     def _create_rack_gen(self, generators):
         def _create_rack():
             return LANCell([create_generator_node] * generators + [create_aggregator_node], backhaul=self.switch)
         return _create_rack
+
+
+    # def materialize(self, topology: Topology, parent=None):
+    #     self._create_identity()
+    #
+    #     for cell in self.nodes:
+    #         self._materialize(topology, cell, self.switch)
+    #
+    #     if self.backhaul:
+    #         if isinstance(self.backhaul, UpDownLink):
+    #             uplink = Link(self.backhaul.bw_up, tags={'type': 'uplink', 'name': 'up_%s' % self.name})
+    #             downlink = Link(self.backhaul.bw_down, tags={'type': 'downlink', 'name': 'down_%s' % self.name})
+    #
+    #             topology.add_connection(Connection(self.switch, uplink, latency_dist=self.backhaul.latency_dist),
+    #                                     directed=True)
+    #             topology.add_connection(Connection(downlink, self.switch), directed=True)
+    #
+    #             topology.add_connection(Connection(self.backhaul.backhaul, downlink,
+    #                                                latency_dist=self.backhaul.latency_dist), directed=True)
+    #             topology.add_connection(Connection(uplink, self.backhaul.backhaul), directed=True)
+    #
+    #         else:
+    #             topology.add_connection(Connection(self.switch, self.backhaul, latency_dist=latency.lan))
 
 
 class City:
@@ -88,14 +107,7 @@ class City:
         city = LANCell([], backhaul=BusinessIsp(self.internet))
         city.materialize(topology)
 
-
         for factory, floors in self.factories.items():
-
-            # factory = LANCell([create_processor_node], backhaul=BusinessIsp(self.internet))
-            # factory.materialize(topology)
-            #
-            # cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=factory.switch))
-            # cloudlet.materialize(topology)
 
             cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch))
             cloudlet.materialize(topology)
