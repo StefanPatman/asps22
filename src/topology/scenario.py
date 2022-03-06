@@ -110,3 +110,9 @@ class City:
 
             cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch))
             cloudlet.materialize(topology)
+
+def create_topology(input):
+    topology = Topology()
+    for city, factories in input.items():
+        City(factories, internet='internet').materialize(topology)
+    return topology

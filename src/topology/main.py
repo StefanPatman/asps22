@@ -12,13 +12,11 @@ from ether.topology import Topology
 from ether.vis import draw_basic
 
 from config import create_config
-from scenario import City
+from scenario import create_topology
+
 
 def main(input):
-    topology = Topology()
-
-    for city, factories in input.items():
-        City(factories, internet='internet').materialize(topology)
+    topology = create_topology(input)
 
     draw_basic(topology)
     fig = plt.gcf()
