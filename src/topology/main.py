@@ -11,8 +11,8 @@ from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
 
-from config import create_config
 from scenario import create_topology
+from config import create_config
 
 
 def main(input):
