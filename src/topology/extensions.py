@@ -25,3 +25,11 @@ class CapacityMulticore(Capacity):
 def create_node_multicore(name: str, cores: int, clock_speed: int, mem: str, arch: str, labels: Dict[str, str]) -> Node:
     capacity = CapacityMulticore(cores, clock_speed, memory=parse_size_string(mem))
     return Node(name, capacity=capacity, arch=arch, labels=labels)
+
+
+class Link:
+    def __init__(self, m: Node, n: Node, topology: Topology):
+        self.m = m
+        self.n = n
+        self.bandwidth = min([k.bandwidth for k in topology.route(m, n).hops])
+        self.delay = round(float(topology.route(m, n).rtt/2), 2)

@@ -1,4 +1,6 @@
 
+from itertools import combinations
+
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
 from ether.blocks.nodes import create_node
@@ -7,7 +9,7 @@ from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
 
-from extensions import CapacityMulticore
+from extensions import CapacityMulticore, Link
 
 
 # The service description, which is specific to our application,
@@ -88,8 +90,40 @@ def create_services(topology):
     }
 
 
+def create_link(l):
+    return {
+        'from_node': _name_node(l.m),
+        'to_node': _name_node(l.n),
+        'bidirectional': True,
+        'properties': {
+            'bandwidth': f'{l.bandwidth}Mbps',
+            'latency': {
+                'delay': f'{l.delay}ms',
+            }
+        }
+
+    }
+
 def create_networks(topology):
-    return {}
+    links = (Link(m, n, topology) for m, n in combinations(topology.get_nodes(), 2))
+    return [{
+        'name': 'internet',
+        'downlink': {
+            'bandwidth': '5Mbps',
+            # 'drop': 0.0001,
+            'latency': {
+                'delay': '50ms',
+            }
+        },
+        'uplink': {
+            'bandwidth': '10Mbps',
+            # 'drop': 0.0001,
+            'latency': {
+                'delay': '50ms',
+            }
+        },
+        'links': [create_link(l) for l in links],
+    }]
 
 
 def _node_cores(n):
