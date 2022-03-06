@@ -14,6 +14,18 @@ from extensions import CapacityMulticore
 # should not be part of this file, but provided from main
 
 
+def _name_node(name):
+    return f'{name}_node'
+
+
+def _name_service(name):
+    return f'{name}_service'
+
+
+def _name_item(name):
+    return f'{name}_item'
+
+
 def create_service_generator(node):
     id = node.labels['asps.id']
     aggregator = node.labels['asps.aggregator']
@@ -70,7 +82,7 @@ def create_service(node):
 
 def create_services(topology):
     return {
-        n.name: create_service(n)
+        _name_service(n.name): create_service(n)
         for n in topology.get_nodes()
         if type(n) == Node
     }
@@ -94,7 +106,7 @@ def _node_clock_speed(n):
 
 def create_node(n):
     return {
-        'name': n.name,
+        'name': _name_node(n.name),
         'capabilities': {
             'memory': n.capacity.memory,
             'processor': {
@@ -108,8 +120,18 @@ def create_nodes(topology):
     return [create_node(n) for n in topology.get_nodes()]
 
 
+def create_topology_item(n):
+    return {
+        'label': _name_item(n.name),
+        'node': _name_node(n.name),
+        'service': _name_service(n.name),
+        'networks': ['internet'],
+        'replicas': 1,
+    }
+
+
 def create_topology(topology):
-    return {}
+    return [create_topology_item(n) for n in topology.get_nodes()]
 
 
 def create_config(topology):
