@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
-from ether.blocks.nodes import create_node
 from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp, counters
 from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
 
 from config import create_config
+from extensions import create_node_multicore
 
 
 class Floor(LANCell):
@@ -31,9 +31,10 @@ class Floor(LANCell):
 
     def _create_aggregator_node(self) -> Node:
 
-        return create_node(
+        return create_node_multicore(
             name=self.aggregator_name,
-            cpus=4, arch='x86', mem='2G',
+            cores=2, clock_speed=700,
+            arch='x86', mem='2Gi',
             labels={
                 'ether.edgerun.io/type': 'server',
                 'ether.edgerun.io/model': 'server',
@@ -47,9 +48,10 @@ class Floor(LANCell):
         id = next(counters["generator"])
         name = f'generator_{id}'
 
-        node = create_node(
+        node = create_node_multicore(
             name=name,
-            cpus=1, arch='arm32', mem='512M',
+            cores=1, clock_speed=300,
+            arch='arm32', mem='512Mi',
             labels={
                 'ether.edgerun.io/type': 'server',
                 'ether.edgerun.io/model': 'server',
@@ -77,9 +79,10 @@ class Factory(LANCell):
         self.processor_name = f'processor_{self.processor_id}'
 
     def _create_processor_node(self) -> Node:
-        return create_node(
+        return create_node_multicore(
             name=self.processor_name,
-            cpus=8, arch='x86', mem='16G',
+            cores=8, clock_speed=1400,
+            arch='x86', mem='16Gi',
             labels={
             'ether.edgerun.io/type': 'server',
             'ether.edgerun.io/model': 'server',

@@ -7,6 +7,9 @@ from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
 
+from extensions import CapacityMulticore
+
+
 # The service description, which is specific to our application,
 # should not be part of this file, but provided from main
 
@@ -77,8 +80,32 @@ def create_networks(topology):
     return {}
 
 
+def _node_cores(n):
+    if isinstance(n.capacity, CapacityMulticore):
+        return n.capacity.cores
+    return 1
+
+
+def _node_clock_speed(n):
+    if isinstance(n.capacity, CapacityMulticore):
+        return n.capacity.clock_speed
+    return n.capacity.cpu_millis
+
+
+def create_node(n):
+    return {
+        'name': n.name,
+        'capabilities': {
+            'memory': n.capacity.memory,
+            'processor': {
+                'clock_speed': _node_clock_speed(n),
+                'cores': _node_cores(n),
+            }
+        }
+    }
+
 def create_nodes(topology):
-    return {}
+    return [create_node(n) for n in topology.get_nodes()]
 
 
 def create_topology(topology):
