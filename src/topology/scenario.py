@@ -41,6 +41,7 @@ class Floor(LANCell):
                 'asps.service': 'aggregator',
                 'asps.processor': self.factory.processor_name,
                 'asps.id': self.aggregator_id,
+                'asps.floor': self.name,
         })
 
     def _create_generator_node(self) -> Node:

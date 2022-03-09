@@ -31,13 +31,14 @@ def _name_item(name):
 def create_service_generator(node):
     id = node.labels['asps.id']
     aggregator = node.labels['asps.aggregator']
+    floor = node.labels['asps.floor']
     return {
         'image': 'generator',
         'environment': [
             'INTERVAL=1',
             f'AGGREGATOR={aggregator}',
             'PORT=5002',
-            'LOCATION=Athens',
+            f'LOCATION={floor}',
             f'ID={id}',
         ]
     }
