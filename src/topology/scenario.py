@@ -15,9 +15,28 @@ from config import create_config
 from extensions import create_node_multicore
 
 
+CONFIG = {
+    'generator': {
+        'cores': 1,
+        'clock': 200,
+        'mem': '512Mi',
+    },
+    'aggregator': {
+        'cores': 1,
+        'clock': 200,
+        'mem': '512Mi',
+    },
+    'processor': {
+        'cores': 2,
+        'clock': 200,
+        'mem': '512Mi',
+    },
+}
+
 class Floor(LANCell):
 
-    def __init__(self, factory, aggregators, backhaul=None) -> None:
+    def __init__(self, factory, aggregators, backhaul=None, config=CONFIG) -> None:
+        self.config = config
         self.factory = factory
         self.aggregators = aggregators
         nodes = [self._create_aggregator_group(a, g) for a, g in aggregators.items()]
@@ -36,8 +55,10 @@ class Floor(LANCell):
         def _create_aggregator_node() -> Node:
             return create_node_multicore(
                 name=aggregator_name,
-                cores=1, clock_speed=230,
-                arch='x86', mem='512Mi',
+                cores=self.config['aggregator']['cores'],
+                clock_speed=self.config['aggregator']['clock'],
+                mem=self.config['aggregator']['mem'],
+                arch='x86',
                 labels={
                     'ether.edgerun.io/type': 'server',
                     'ether.edgerun.io/model': 'server',
@@ -52,8 +73,10 @@ class Floor(LANCell):
 
             node = create_node_multicore(
                 name=name,
-                cores=1, clock_speed=230,
-                arch='arm32', mem='512Mi',
+                cores=self.config['generator']['cores'],
+                clock_speed=self.config['generator']['clock'],
+                mem=self.config['generator']['mem'],
+                arch='x86',
                 labels={
                     'ether.edgerun.io/type': 'server',
                     'ether.edgerun.io/model': 'server',
@@ -69,7 +92,8 @@ class Floor(LANCell):
 
 class Factory(LANCell):
 
-    def __init__(self, floors, backhaul=None) -> None:
+    def __init__(self, floors, backhaul=None, config=CONFIG) -> None:
+        self.config=config
         cloudlet_nodes = [
             self._create_rack_gen(aggregators)
             for floor, aggregators in floors.items()
@@ -86,8 +110,10 @@ class Factory(LANCell):
     def _create_processor_node(self) -> Node:
         return create_node_multicore(
             name=self.processor_name,
-            cores=2, clock_speed=230,
-            arch='x86', mem='512Mi',
+            cores=self.config['processor']['cores'],
+            clock_speed=self.config['processor']['clock'],
+            mem=self.config['processor']['mem'],
+            arch='x86',
             labels={
             'ether.edgerun.io/type': 'server',
             'ether.edgerun.io/model': 'server',
@@ -97,14 +123,14 @@ class Factory(LANCell):
 
     def _create_rack_gen(self, aggregators):
         def _create_rack():
-            return Floor(self, aggregators, backhaul=self.switch)
+            return Floor(self, aggregators, backhaul=self.switch, config=self.config)
         return _create_rack
 
 
 class City:
     """Contains all factories for one city"""
-    def __init__(self, factories, internet='internet') -> None:
-
+    def __init__(self, factories, internet='internet', config=CONFIG) -> None:
+        self.config = config
         super().__init__()
         self.factories = factories
         self.internet = internet
@@ -116,11 +142,11 @@ class City:
 
         for factory, floors in self.factories.items():
 
-            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch))
+            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
             cloudlet.materialize(topology)
 
-def create_topology(input):
+def create_topology(input, config):
     topology = Topology()
     for city, factories in input.items():
-        City(factories, internet='internet').materialize(topology)
+        City(factories, internet='internet', config=config).materialize(topology)
     return topology

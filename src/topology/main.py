@@ -16,7 +16,10 @@ from config import create_config
 
 
 def main(input):
-    topology = create_topology(input)
+    scenario = input['scenario']
+    config = input['config']
+
+    topology = create_topology(scenario, config)
 
     draw_basic(topology)
     fig = plt.gcf()

@@ -1,5 +1,19 @@
-Athens:
-  Factory1:
-    Floor1:
-      Aggregator1: 1
-      Aggregator2: 2
+config:
+  generator:
+    cores: 1
+    clock: 100
+    mem: 256Mi
+  aggregator:
+    cores: 1
+    clock: 100
+    mem: 512Mi
+  processor:
+    cores: 2
+    clock: 100
+    mem: 512Mi
+scenario:
+  Athens:
+    Factory1:
+      Floor1:
+        Aggregator1: 1
+        Aggregator2: 2

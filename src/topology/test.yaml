@@ -61,105 +61,105 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.54ms
+          delay: 1.52ms
       to_node: aggregator_0_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.58ms
+          delay: 1.49ms
       to_node: generator_0_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.6ms
+          delay: 1.62ms
       to_node: aggregator_1_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.54ms
+          delay: 1.61ms
       to_node: generator_1_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.47ms
+          delay: 1.51ms
       to_node: generator_2_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.07ms
+          delay: 1.03ms
       to_node: generator_0_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.01ms
+          delay: 1.12ms
       to_node: aggregator_1_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.18ms
+          delay: 0.98ms
       to_node: generator_1_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.11ms
+          delay: 0.98ms
       to_node: generator_2_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.08ms
+      to_node: aggregator_1_node
     - bidirectional: true
       from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 0.99ms
-      to_node: aggregator_1_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.01ms
       to_node: generator_1_node
     - bidirectional: true
       from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.0ms
+          delay: 1.09ms
       to_node: generator_2_node
     - bidirectional: true
       from_node: aggregator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.1ms
+          delay: 0.99ms
       to_node: generator_1_node
     - bidirectional: true
       from_node: aggregator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.95ms
+          delay: 0.96ms
       to_node: generator_2_node
     - bidirectional: true
       from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.05ms
+          delay: 0.98ms
       to_node: generator_2_node
     name: internet
     uplink:
@@ -170,37 +170,37 @@ x-fogify:
   - capabilities:
       memory: 512.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 2
     name: processor_0_node
   - capabilities:
       memory: 512.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 1
     name: aggregator_0_node
   - capabilities:
-      memory: 512.000M
+      memory: 256.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 1
     name: generator_0_node
   - capabilities:
       memory: 512.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 1
     name: aggregator_1_node
   - capabilities:
-      memory: 512.000M
+      memory: 256.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 1
     name: generator_1_node
   - capabilities:
-      memory: 512.000M
+      memory: 256.000M
       processor:
-        clock_speed: 230
+        clock_speed: 100
         cores: 1
     name: generator_2_node
   topology:
