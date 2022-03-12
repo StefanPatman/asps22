@@ -8,6 +8,15 @@ services:
     image: aggregator
     ports:
     - 5002
+  aggregator_1_service:
+    environment:
+    - PROCESSOR=processor_0_item
+    - PROCESSOR_PORT=5003
+    - PORT=5002
+    - ID=1
+    image: aggregator
+    ports:
+    - 5002
   generator_0_service:
     environment:
     - INTERVAL=1
@@ -15,6 +24,22 @@ services:
     - PORT=5002
     - LOCATION=floor_0
     - ID=0
+    image: generator
+  generator_1_service:
+    environment:
+    - INTERVAL=1
+    - AGGREGATOR=aggregator_1_item
+    - PORT=5002
+    - LOCATION=floor_0
+    - ID=1
+    image: generator
+  generator_2_service:
+    environment:
+    - INTERVAL=1
+    - AGGREGATOR=aggregator_1_item
+    - PORT=5002
+    - LOCATION=floor_0
+    - ID=2
     image: generator
   processor_0_service:
     environment:
@@ -36,22 +61,106 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.49ms
+          delay: 1.54ms
       to_node: aggregator_0_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.65ms
+          delay: 1.58ms
+      to_node: generator_0_node
+    - bidirectional: true
+      from_node: processor_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.6ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: processor_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.54ms
+      to_node: generator_1_node
+    - bidirectional: true
+      from_node: processor_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.47ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: aggregator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.07ms
       to_node: generator_0_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.94ms
-      to_node: generator_0_node
+          delay: 1.01ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: aggregator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.18ms
+      to_node: generator_1_node
+    - bidirectional: true
+      from_node: aggregator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.11ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.99ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.01ms
+      to_node: generator_1_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.0ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.1ms
+      to_node: generator_1_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.95ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: generator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.05ms
+      to_node: generator_2_node
     name: internet
     uplink:
       bandwidth: 10Mbps
@@ -76,6 +185,24 @@ x-fogify:
         clock_speed: 230
         cores: 1
     name: generator_0_node
+  - capabilities:
+      memory: 512.000M
+      processor:
+        clock_speed: 230
+        cores: 1
+    name: aggregator_1_node
+  - capabilities:
+      memory: 512.000M
+      processor:
+        clock_speed: 230
+        cores: 1
+    name: generator_1_node
+  - capabilities:
+      memory: 512.000M
+      processor:
+        clock_speed: 230
+        cores: 1
+    name: generator_2_node
   topology:
   - label: processor_0_item
     networks:
@@ -95,4 +222,22 @@ x-fogify:
     node: generator_0_node
     replicas: 1
     service: generator_0_service
+  - label: aggregator_1_item
+    networks:
+    - internet
+    node: aggregator_1_node
+    replicas: 1
+    service: aggregator_1_service
+  - label: generator_1_item
+    networks:
+    - internet
+    node: generator_1_node
+    replicas: 1
+    service: generator_1_service
+  - label: generator_2_item
+    networks:
+    - internet
+    node: generator_2_node
+    replicas: 1
+    service: generator_2_service
 

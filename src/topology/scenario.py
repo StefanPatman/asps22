@@ -1,6 +1,7 @@
 
 from yaml import safe_load, dump
 from sys import argv
+from itertools import chain
 import matplotlib.pyplot as plt
 
 from ether.core import Connection, Node, Capacity
@@ -16,59 +17,62 @@ from extensions import create_node_multicore
 
 class Floor(LANCell):
 
-    def __init__(self, factory, generator_count, backhaul=None) -> None:
+    def __init__(self, factory, aggregators, backhaul=None) -> None:
         self.factory = factory
-        self.generator_count = generator_count
-        generator_nodes = [self._create_generator_node] * generator_count
-        super().__init__([self._create_aggregator_node] + generator_nodes, backhaul=backhaul)
+        self.aggregators = aggregators
+        nodes = [self._create_aggregator_group(a, g) for a, g in aggregators.items()]
+        super().__init__(chain(nodes), backhaul=backhaul)
 
     def _create_identity(self):
         self.nr = next(counters['floor'])
         self.name = f'floor_{self.nr}'
         self.switch = f'switch_{self.name}'
-        self.aggregator_id = next(counters["aggregator"])
-        self.aggregator_name = f'aggregator_{self.aggregator_id}'
 
-    def _create_aggregator_node(self) -> Node:
+    def _create_aggregator_group(self, aggregator_name, generator_count):
 
-        return create_node_multicore(
-            name=self.aggregator_name,
-            cores=1, clock_speed=230,
-            arch='x86', mem='512Mi',
-            labels={
-                'ether.edgerun.io/type': 'server',
-                'ether.edgerun.io/model': 'server',
-                'asps.service': 'aggregator',
-                'asps.processor': self.factory.processor_name,
-                'asps.id': self.aggregator_id,
-        })
+        aggregator_id = next(counters["aggregator"])
+        aggregator_name = f'aggregator_{aggregator_id}'  # ?
 
-    def _create_generator_node(self) -> Node:
-
-        id = next(counters["generator"])
-        name = f'generator_{id}'
-
-        node = create_node_multicore(
-            name=name,
-            cores=1, clock_speed=230,
-            arch='arm32', mem='512Mi',
-            labels={
-                'ether.edgerun.io/type': 'server',
-                'ether.edgerun.io/model': 'server',
-                'asps.floor': self.name,
-                'asps.service': 'generator',
-                'asps.aggregator': self.aggregator_name,
-                'asps.id': id,
+        def _create_aggregator_node() -> Node:
+            return create_node_multicore(
+                name=aggregator_name,
+                cores=1, clock_speed=230,
+                arch='x86', mem='512Mi',
+                labels={
+                    'ether.edgerun.io/type': 'server',
+                    'ether.edgerun.io/model': 'server',
+                    'asps.service': 'aggregator',
+                    'asps.processor': self.factory.processor_name,
+                    'asps.id': aggregator_id,
             })
-        return node
+
+        def _create_generator_node() -> Node:
+            id = next(counters["generator"])
+            name = f'generator_{id}'
+
+            node = create_node_multicore(
+                name=name,
+                cores=1, clock_speed=230,
+                arch='arm32', mem='512Mi',
+                labels={
+                    'ether.edgerun.io/type': 'server',
+                    'ether.edgerun.io/model': 'server',
+                    'asps.floor': self.name,
+                    'asps.service': 'generator',
+                    'asps.aggregator': aggregator_name,
+                    'asps.id': id,
+                })
+            return node
+
+        return [_create_aggregator_node] + [_create_generator_node] * generator_count
 
 
 class Factory(LANCell):
 
-    def __init__(self, generators_per_floor, backhaul=None) -> None:
+    def __init__(self, floors, backhaul=None) -> None:
         cloudlet_nodes = [
-            self._create_rack_gen(generators)
-            for floor, generators in generators_per_floor.items()
+            self._create_rack_gen(aggregators)
+            for floor, aggregators in floors.items()
         ]
         super().__init__([self._create_processor_node] + cloudlet_nodes, backhaul=backhaul)
 
@@ -91,9 +95,9 @@ class Factory(LANCell):
             'asps.id': self.processor_id,
         })
 
-    def _create_rack_gen(self, generators):
+    def _create_rack_gen(self, aggregators):
         def _create_rack():
-            return Floor(self, generators, backhaul=self.switch)
+            return Floor(self, aggregators, backhaul=self.switch)
         return _create_rack
 
 

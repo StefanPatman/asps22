@@ -1,3 +1,5 @@
 Athens:
   Factory1:
-    Flooo1: 1
+    Floor1:
+      Aggregator1: 1
+      Aggregator2: 2
