@@ -26,17 +26,17 @@ services:
   aggregator:
     image: aggregator1
     environment:
-      - PROCESSOR_PORT=5001
+      - PROCESSOR_PORT=5003
       - PROCESSOR=processor
       - PORT=5000
     ports:
-      - "5000:5000"
+      - 5000
     depends_on:
       - processor1
 
   processor:
     image: processor1
     environment:
-      - PORT=5001
+      - PORT=5003
     ports:
-      - "5001:5001"
+      - 5003
