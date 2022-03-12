@@ -16,4 +16,3 @@ scenario:
     Factory1:
       Floor1:
         Aggregator1: 1
-        Aggregator2: 2

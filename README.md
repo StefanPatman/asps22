@@ -13,3 +13,9 @@ To generate a new fogified yaml for a simple case:
 cd src/topology
 python main.py simple.yml
 ```
+
+### Requirements:
+```
+edgerun-ether
+PyYAML
+```

@@ -1,3 +1,5 @@
+# Unfogified manual deployment
+
 version: "3.7"
 
 services:
@@ -21,7 +23,6 @@ services:
     depends_on:
       - aggregator
 
-
   aggregator:
     image: aggregator1
     environment:
@@ -32,7 +33,6 @@ services:
       - "5000:5000"
     depends_on:
       - processor1
-
 
   processor:
     image: processor1
