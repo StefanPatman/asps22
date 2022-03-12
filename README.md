@@ -9,12 +9,16 @@ Read more: [report-draft.odt](report-draft.odt)
 Η εφαρμογή μας προσομοιώνει το Fog σύστημα για την λήψη και επεξεργασία θερμοκρασιών σε εργοστάσια. Η τοπολογία μας αποτελείται από εργοστάσια, καθένα εκ’ των οποίων έχει παραμετροποήσιμο αριθμό πατωμάτων και μηχανημάτων-θερμομέτρων σε αυτά. Οι συσκεύες, generators, σε κάθε πάτωμα του εργοστασίου παράγουν δεδομένα τα οποία συλλέγει ο aggregator του πατώματος. Τέλος κάθε εργοστάσιο έχει τον δικό του processor, όπου συλέγονται τα δεδομένα και μπορούν να εμφανιστούν στην μορφή λίστας. Τα εργοστάσια συνδέονται σε κοινό internet πράγμα πυ επιτρέπει στο κθένα όποτε θέλει να έχει πρόσβαση στα δεδομένα του άλλου.
 
 Build the docker images:
-`make all`
+```
+make all
+```
 
 Manually run the app using docker-compose:
-`docker-compose -f examples/unfogified.yml up`
+```
+docker-compose -f examples/unfogified.yml up
+```
 
-To check the server output, visit:
+To check the server output, visit: <br>
 http://0.0.0.0:5003/data?id=1
 
 
@@ -49,7 +53,7 @@ Find the processor API page from the logs:
 docker service logs fogify_processor_0_item
 ```
 
-Connect to the page and query the specified id, eg:
+Connect to the page and query the specified id, eg: <br>
 http://172.18.0.3:5003/data?id=0
 
 Undeploy using Jupyter.
