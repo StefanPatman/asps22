@@ -33,15 +33,14 @@ class Floor(LANCell):
 
         return create_node_multicore(
             name=self.aggregator_name,
-            cores=2, clock_speed=700,
-            arch='x86', mem='2Gi',
+            cores=1, clock_speed=230,
+            arch='x86', mem='512Mi',
             labels={
                 'ether.edgerun.io/type': 'server',
                 'ether.edgerun.io/model': 'server',
                 'asps.service': 'aggregator',
                 'asps.processor': self.factory.processor_name,
                 'asps.id': self.aggregator_id,
-                'asps.floor': self.name,
         })
 
     def _create_generator_node(self) -> Node:
@@ -51,11 +50,12 @@ class Floor(LANCell):
 
         node = create_node_multicore(
             name=name,
-            cores=1, clock_speed=300,
+            cores=1, clock_speed=230,
             arch='arm32', mem='512Mi',
             labels={
                 'ether.edgerun.io/type': 'server',
                 'ether.edgerun.io/model': 'server',
+                'asps.floor': self.name,
                 'asps.service': 'generator',
                 'asps.aggregator': self.aggregator_name,
                 'asps.id': id,
@@ -82,8 +82,8 @@ class Factory(LANCell):
     def _create_processor_node(self) -> Node:
         return create_node_multicore(
             name=self.processor_name,
-            cores=8, clock_speed=1400,
-            arch='x86', mem='16Gi',
+            cores=2, clock_speed=230,
+            arch='x86', mem='512Mi',
             labels={
             'ether.edgerun.io/type': 'server',
             'ether.edgerun.io/model': 'server',

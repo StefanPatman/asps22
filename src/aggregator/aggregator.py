@@ -74,7 +74,7 @@ def listen():
 def main(processor, a_port, t, port):
     p.processor = Processor(processor, a_port)
     p.t = t
-    app.run(port=port, host='aggregator', debug=True)
+    app.run(port=port, host='0.0.0.0', debug=True)
 
 
 if __name__ == '__main__':

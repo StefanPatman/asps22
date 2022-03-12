@@ -28,6 +28,10 @@ def _name_item(name):
     return f'{name}_item'
 
 
+def _memory_megas(bytes):
+    return f'{bytes / 2**20:.3f}M'
+
+
 def create_service_generator(node):
     id = node.labels['asps.id']
     aggregator = node.labels['asps.aggregator']
@@ -36,7 +40,7 @@ def create_service_generator(node):
         'image': 'generator',
         'environment': [
             'INTERVAL=1',
-            f'AGGREGATOR={aggregator}',
+            f'AGGREGATOR={_name_item(aggregator)}',
             'PORT=5002',
             f'LOCATION={floor}',
             f'ID={id}',
@@ -50,12 +54,13 @@ def create_service_aggregator(node):
     return {
         'image': 'aggregator',
         'environment': [
-            f'PROCESSOR={processor}',
+            f'PROCESSOR={_name_item(processor)}',
             'PROCESSOR_PORT=5003',
+            'PORT=5002',
             f'ID={id}',
         ],
         'ports': [
-            '5000:5002'
+            5002
         ]
     }
 
@@ -69,7 +74,7 @@ def create_service_processor(node):
             f'ID={id}',
         ],
         'ports': [
-            '5001:5003'
+            5003
         ]
     }
 
@@ -143,7 +148,7 @@ def create_node(n):
     return {
         'name': _name_node(n.name),
         'capabilities': {
-            'memory': n.capacity.memory,
+            'memory': _memory_megas(n.capacity.memory),
             'processor': {
                 'clock_speed': _node_clock_speed(n),
                 'cores': _node_cores(n),

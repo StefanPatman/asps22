@@ -57,7 +57,7 @@ def data():
 
 
 def main(port):
-    app.run(port=port, host='0.0.0.0', debug=True)
+    app.run(port=port, host='0.0.0.0', debug=False)
 
 
 if __name__ == '__main__':
