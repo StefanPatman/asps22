@@ -22,14 +22,33 @@ class Processor:
             self.locations[id] = data['location']
         self.elements[id].append(data)
 
+    def ids(self):
+        return self.elements.keys()
+
     def exists(self, id):
         return (int(id) in self.elements.keys())
+
+    def is_in_location(self, id, location):
+        return (self.locations[id] == location)
 
     def history(self, id):
         data = self.elements.get(int(id))
         if data is None:
             return f"No such id: {id}"
         return list(data)
+
+    def latest(self, id):
+        data = self.elements.get(int(id))
+        if data is None:
+            return f"No such id: {id}"
+        return data[-1]
+
+    def maximum(self, id):
+        data = self.elements.get(int(id))
+        if data is None:
+            return f"No such id: {id}"
+        return max(data, key=lambda x: x['temperature'])
+
 
 a = Processor()
 app = Flask(__name__)
@@ -43,22 +62,65 @@ def listen():
     a.listen(id, data)
     return {}
 
-@app.route('/history/all', methods = ['GET'])
-def history_all():
-    app.logger.info(f'All history')
+
+def attr_generator_id(ids, attr):
     return jsonify({
-        id: a.history(id) for id in a.elements.keys()
+        id: getattr(a, attr)(id) for id in ids
     })
+
+
+def attr_generator_location(locations, attr):
+    ids = [id for id in a.ids() if any(a.is_in_location(id, loc) for loc in locations)]
+    return jsonify({
+        id: getattr(a, attr)(id) for id in ids
+    })
+
+
+def attr_generator(attr):
+    ids = request.args.getlist('id')
+    locations = request.args.getlist('location')
+    if ids:
+        return attr_generator_id(ids, attr)
+    elif locations:
+        return attr_generator_location(locations, attr)
+    return "Missing argument: id or location"
+
+
+def attr_all(attr):
+    return jsonify({
+        id: getattr(a, attr)(id) for id in a.ids()
+    })
+
+
+@app.route('/latest/generator', methods = ['GET'])
+def latest_generator():
+    return attr_generator('latest')
+
+
+@app.route('/latest/all', methods = ['GET'])
+def latest_all():
+    return attr_all('latest')
+
+
+@app.route('/maximum/generator', methods = ['GET'])
+def maximum_generator():
+    return attr_generator('maximum')
+
+
+@app.route('/maximum/all', methods = ['GET'])
+def maximum_all():
+    return attr_all('maximum')
+
 
 @app.route('/history/generator', methods = ['GET'])
 def history_generator():
-    ids = request.args.getlist('id')
-    app.logger.info(f'History for IDs: {repr(ids)}')
-    if ids is None:
-        return "Missing argument: id"
-    return jsonify({
-        id: a.history(id) for id in ids
-    })
+    return attr_generator('history')
+
+
+@app.route('/history/all', methods = ['GET'])
+def history_all():
+    return attr_all('history')
+
 
 @app.route('/graph', methods = ['GET'])
 def graph():
@@ -73,17 +135,6 @@ def graph():
         for x in a.history(id)
     })
 
-#
-# /latest/all
-# /latest/floor?id=1&id=2
-# /latest/generator?id=1
-# /maximum/all
-# /maximum/floor?id=1&id=2
-# /maximum/generator?id=1
-# /history/all
-# /history/generator?id=1
-# /history/graph?id=1
-#
 
 def main(port):
     app.run(port=port, host='0.0.0.0', debug=True)
