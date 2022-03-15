@@ -35,7 +35,8 @@ CONFIG = {
 
 class Floor(LANCell):
 
-    def __init__(self, factory, aggregators, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, factory, aggregators, backhaul=None, config=CONFIG) -> None:
+        self.label=label
         self.config = config
         self.factory = factory
         self.aggregators = aggregators
@@ -80,7 +81,7 @@ class Floor(LANCell):
                 labels={
                     'ether.edgerun.io/type': 'server',
                     'ether.edgerun.io/model': 'server',
-                    'asps.floor': self.name,
+                    'asps.floor': self.label,
                     'asps.service': 'generator',
                     'asps.aggregator': aggregator_name,
                     'asps.id': id,
@@ -92,10 +93,11 @@ class Floor(LANCell):
 
 class Factory(LANCell):
 
-    def __init__(self, floors, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, floors, backhaul=None, config=CONFIG) -> None:
+        self.label=label
         self.config=config
         cloudlet_nodes = [
-            self._create_rack_gen(aggregators)
+            self._create_floor_gen(floor, aggregators)
             for floor, aggregators in floors.items()
         ]
         super().__init__([self._create_processor_node] + cloudlet_nodes, backhaul=backhaul)
@@ -121,10 +123,10 @@ class Factory(LANCell):
             'asps.id': self.processor_id,
         })
 
-    def _create_rack_gen(self, aggregators):
-        def _create_rack():
-            return Floor(self, aggregators, backhaul=self.switch, config=self.config)
-        return _create_rack
+    def _create_floor_gen(self, floor, aggregators):
+        def _create_floor():
+            return Floor(floor, self, aggregators, backhaul=self.switch, config=self.config)
+        return _create_floor
 
 
 class City:
@@ -142,7 +144,7 @@ class City:
 
         for factory, floors in self.factories.items():
 
-            cloudlet = Factory(floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
+            cloudlet = Factory(factory, floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
             cloudlet.materialize(topology)
 
 def create_topology(input, config):
