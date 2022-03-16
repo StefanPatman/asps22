@@ -79,9 +79,9 @@ def main(processor, a_port, t, port):
 
 if __name__ == '__main__':
     kwargs = dict(
-            port = int(getenv('PORT', 5000)),
-            a_port = int(getenv('PROCESSOR_PORT', 5001)),
-            processor = getenv('PROCESSOR', 'localhost'),
-            t = getenv('T', 10),
+        port = int(getenv('PORT', 5000)),
+        a_port = int(getenv('PROCESSOR_PORT', 5001)),
+        processor = getenv('PROCESSOR', 'localhost'),
+        t = getenv('T', 10),
     )
     main(**kwargs)

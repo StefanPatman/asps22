@@ -36,10 +36,11 @@ def create_service_generator(node):
     id = node.labels['asps.id']
     aggregator = node.labels['asps.aggregator']
     floor = node.labels['asps.floor']
+    interval = node.labels['asps.interval']
     return {
         'image': 'generator',
         'environment': [
-            'INTERVAL=1',
+            f'INTERVAL={interval}',
             f'AGGREGATOR={_name_item(aggregator)}',
             'PORT=5002',
             f'LOCATION={floor}',
@@ -67,9 +68,11 @@ def create_service_aggregator(node):
 
 def create_service_processor(node):
     id = node.labels['asps.id']
+    history = node.labels['asps.history']
     return {
         'image': 'processor',
         'environment': [
+            f'HISTORY_LENGTH={history}',
             'PORT=5003',
             f'ID={id}',
         ],

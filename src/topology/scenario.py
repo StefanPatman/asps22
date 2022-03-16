@@ -18,18 +18,22 @@ from extensions import create_node_multicore
 CONFIG = {
     'generator': {
         'cores': 1,
-        'clock': 200,
-        'mem': '512Mi',
+        'clock': 100,
+        'mem': '128Mi',
     },
     'aggregator': {
         'cores': 1,
-        'clock': 200,
-        'mem': '512Mi',
+        'clock': 100,
+        'mem': '256Mi',
     },
     'processor': {
         'cores': 2,
-        'clock': 200,
-        'mem': '512Mi',
+        'clock': 100,
+        'mem': '256Mi',
+    },
+    'app': {
+        'interval': 1,
+        'history': 10,
     },
 }
 
@@ -82,6 +86,7 @@ class Floor(LANCell):
                     'ether.edgerun.io/type': 'server',
                     'ether.edgerun.io/model': 'server',
                     'asps.floor': self.label,
+                    'asps.interval': self.config['app']['interval'],
                     'asps.service': 'generator',
                     'asps.aggregator': aggregator_name,
                     'asps.id': id,
@@ -119,6 +124,7 @@ class Factory(LANCell):
             labels={
             'ether.edgerun.io/type': 'server',
             'ether.edgerun.io/model': 'server',
+            'asps.history': self.config['app']['history'],
             'asps.service': 'processor',
             'asps.id': self.processor_id,
         })

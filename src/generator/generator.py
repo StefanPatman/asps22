@@ -76,10 +76,10 @@ def main(aggregator, port, location, interval, id):
 
 if __name__ == "__main__":
     kwargs = dict(
-            port = int(getenv('PORT', 5000)),
-            aggregator = getenv('AGGREGATOR', 'localhost'),
-            location = getenv('LOCATION', 'Athens'),
-            interval = int(getenv('INTERVAL', 1)),
-            id = int(getenv('ID', 1)),
+        port = int(getenv('PORT', 5000)),
+        aggregator = getenv('AGGREGATOR', 'localhost'),
+        location = getenv('LOCATION', 'Athens'),
+        interval = float(getenv('INTERVAL', 1)),
+        id = int(getenv('ID', 1)),
     )
     main(**kwargs)

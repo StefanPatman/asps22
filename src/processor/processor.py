@@ -136,12 +136,14 @@ def graph():
     })
 
 
-def main(port):
+def main(port, history_length):
+    a.history_length = history_length
     app.run(port=port, host='0.0.0.0', debug=True)
 
 
 if __name__ == '__main__':
     kwargs = dict(
-            port = int(getenv('PORT', 5001)),
+        port = int(getenv('PORT', 5001)),
+        history_length = int(getenv('HISTORY_LENGTH', 10)),
     )
     main(**kwargs)

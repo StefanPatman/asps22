@@ -11,6 +11,9 @@ config:
     cores: 2
     clock: 100
     mem: 512Mi
+  app:
+    interval: 1
+    history: 10
 scenario:
   Athens:
     Factory1:

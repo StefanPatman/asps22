@@ -2,15 +2,18 @@ config:
   generator:
     cores: 1
     clock: 100
-    mem: 256Mi
+    mem: 128Mi
   aggregator:
     cores: 1
     clock: 100
-    mem: 512Mi
+    mem: 256Mi
   processor:
     cores: 2
     clock: 100
-    mem: 512Mi
+    mem: 256Mi
+  app:
+    interval: 0.1
+    history: 20
 scenario:
   Athens:
     Factory1:
