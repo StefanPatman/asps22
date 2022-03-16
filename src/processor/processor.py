@@ -49,6 +49,20 @@ class Processor:
             return f"No such id: {id}"
         return max(data, key=lambda x: x['temperature'])
 
+    def aggregate(self, id, attr):
+        data = self.elements.get(int(id))
+        if data is None:
+            return f"No such id: {id}"
+        s = sum(x[attr] for x in data)
+        l = len(data)
+        return s / l
+
+    def delay(self, id):
+        return self.aggregate(id, 'delay')
+
+    def computation(self, id):
+        return self.aggregate(id, 'computation')
+
 
 a = Processor()
 app = Flask(__name__)
@@ -58,6 +72,8 @@ app = Flask(__name__)
 def listen():
     data = request.get_json()
     data['timestamp_arrived'] = time()
+    data['delay'] = time() - data['timestamp_last_generated']
+    data['computation'] = data['timestamp_computed'] - data['timestamp_last_aggregated']
     id = int(data['id'])
     a.listen(id, data)
     return {}
@@ -92,7 +108,7 @@ def attr_all(attr):
     })
 
 
-@app.route('/latest/generator', methods = ['GET'])
+@app.route('/latest', methods = ['GET'])
 def latest_generator():
     return attr_generator('latest')
 
@@ -102,7 +118,7 @@ def latest_all():
     return attr_all('latest')
 
 
-@app.route('/maximum/generator', methods = ['GET'])
+@app.route('/maximum', methods = ['GET'])
 def maximum_generator():
     return attr_generator('maximum')
 
@@ -112,7 +128,7 @@ def maximum_all():
     return attr_all('maximum')
 
 
-@app.route('/history/generator', methods = ['GET'])
+@app.route('/history', methods = ['GET'])
 def history_generator():
     return attr_generator('history')
 
@@ -120,6 +136,26 @@ def history_generator():
 @app.route('/history/all', methods = ['GET'])
 def history_all():
     return attr_all('history')
+
+
+@app.route('/delay', methods = ['GET'])
+def delay_generator():
+    return attr_generator('delay')
+
+
+@app.route('/delay/all', methods = ['GET'])
+def delay_all():
+    return attr_all('delay')
+
+
+@app.route('/computation', methods = ['GET'])
+def computation_generator():
+    return attr_generator('computation')
+
+
+@app.route('/computation/all', methods = ['GET'])
+def computation_all():
+    return attr_all('computation')
 
 
 @app.route('/graph', methods = ['GET'])
