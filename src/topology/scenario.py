@@ -34,6 +34,8 @@ CONFIG = {
     'app': {
         'interval': 1,
         'history': 10,
+        'window': 10,
+        'busy_wait': 0,
     },
 }
 
@@ -67,6 +69,8 @@ class Floor(LANCell):
                 labels={
                     'ether.edgerun.io/type': 'server',
                     'ether.edgerun.io/model': 'server',
+                    'asps.window': self.config['app']['window'],
+                    'asps.busy_wait': self.config['app']['busy_wait'],
                     'asps.service': 'aggregator',
                     'asps.processor': self.factory.processor_name,
                     'asps.id': aggregator_id,

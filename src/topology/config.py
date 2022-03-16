@@ -52,6 +52,8 @@ def create_service_generator(node):
 def create_service_aggregator(node):
     id = node.labels['asps.id']
     processor = node.labels['asps.processor']
+    window = node.labels['asps.window']
+    busy_wait = node.labels['asps.busy_wait']
     return {
         'image': 'aggregator',
         'environment': [
@@ -59,6 +61,8 @@ def create_service_aggregator(node):
             'PROCESSOR_PORT=5003',
             'PORT=5002',
             f'ID={id}',
+            f'WINDOW={window}',
+            f'BUSY_WAIT={busy_wait}',
         ],
         'ports': [
             5002
