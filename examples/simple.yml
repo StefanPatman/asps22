@@ -1,4 +1,4 @@
-config:
+global:
   generator:
     cores: 1
     clock: 100
@@ -20,4 +20,18 @@ scenario:
   Athens:
     Factory1:
       Floor1:
-        Aggregator1: 1
+        aggregators:
+          Aggregator1: 1
+        latency:
+          # from ether lan connection
+          sigma: 0.25
+          loc: 0.35
+          scale: 0.16
+      Floor2:
+        aggregators:
+          Aggregator1: 1
+        latency:
+          # from ether wireless connection
+          sigma: 0.635
+          loc: 1.18
+          scale: 3.27

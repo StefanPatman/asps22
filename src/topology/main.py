@@ -17,7 +17,7 @@ from config import create_config
 
 def main(input):
     scenario = input['scenario']
-    config = input['config']
+    config = input['global']
 
     topology = create_topology(scenario, config)
 

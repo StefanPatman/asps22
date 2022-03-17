@@ -4,6 +4,8 @@ from sys import argv
 from itertools import chain
 import matplotlib.pyplot as plt
 
+from srds import ParameterizedDistribution as PDist
+
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
 from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp, counters
@@ -41,11 +43,12 @@ CONFIG = {
 
 class Floor(LANCell):
 
-    def __init__(self, label, factory, aggregators, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, factory, aggregators, latency, backhaul=None, config=CONFIG) -> None:
         self.label=label
         self.config = config
         self.factory = factory
         self.aggregators = aggregators
+        self.latency = PDist.lognorm((latency['sigma'], latency['loc'], latency['scale']))
         nodes = [self._create_aggregator_group(a, g) for a, g in aggregators.items()]
         super().__init__(chain(nodes), backhaul=backhaul)
 
@@ -53,6 +56,15 @@ class Floor(LANCell):
         self.nr = next(counters['floor'])
         self.name = f'floor_{self.nr}'
         self.switch = f'switch_{self.name}'
+
+    def materialize(self, topology: Topology, parent=None):
+        self._create_identity()
+
+        for cell in self.nodes:
+            self._materialize(topology, cell, self.switch)
+
+        if self.backhaul:
+            topology.add_connection(Connection(self.switch, self.backhaul, latency_dist=self.latency))
 
     def _create_aggregator_group(self, aggregator_name, generator_count):
 
@@ -106,8 +118,8 @@ class Factory(LANCell):
         self.label=label
         self.config=config
         cloudlet_nodes = [
-            self._create_floor_gen(floor, aggregators)
-            for floor, aggregators in floors.items()
+            self._create_floor_gen(floor, desc)
+            for floor, desc in floors.items()
         ]
         super().__init__([self._create_processor_node] + cloudlet_nodes, backhaul=backhaul)
 
@@ -133,9 +145,11 @@ class Factory(LANCell):
             'asps.id': self.processor_id,
         })
 
-    def _create_floor_gen(self, floor, aggregators):
+    def _create_floor_gen(self, floor, desc):
+        aggregators = desc['aggregators']
+        latency = desc['latency']
         def _create_floor():
-            return Floor(floor, self, aggregators, backhaul=self.switch, config=self.config)
+            return Floor(floor, self, aggregators, latency, backhaul=self.switch, config=self.config)
         return _create_floor
 
 
