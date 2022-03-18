@@ -13,7 +13,7 @@ import scenario
 
 for file in Path('examples').glob('*.yml'):
 
-    output = Path('examples/fogified') / file.name
+    output = Path('examples/fogified') / f'{file.stem}.out{file.suffix}'
 
     print(f'{file} -> {output}')
 

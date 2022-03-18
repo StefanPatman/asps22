@@ -26,7 +26,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_0_item
     - PORT=5002
-    - LOCATION=Floor1a
+    - LOCATION=Floor1
     - ID=0
     image: generator
   generator_1_service:
@@ -34,7 +34,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_0_item
     - PORT=5002
-    - LOCATION=Floor1a
+    - LOCATION=Floor1
     - ID=1
     image: generator
   generator_2_service:
@@ -42,7 +42,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_0_item
     - PORT=5002
-    - LOCATION=Floor1a
+    - LOCATION=Floor1
     - ID=2
     image: generator
   generator_3_service:
@@ -50,7 +50,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_0_item
     - PORT=5002
-    - LOCATION=Floor1a
+    - LOCATION=Floor1
     - ID=3
     image: generator
   generator_4_service:
@@ -58,7 +58,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_0_item
     - PORT=5002
-    - LOCATION=Floor1a
+    - LOCATION=Floor1
     - ID=4
     image: generator
   generator_5_service:
@@ -66,7 +66,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_1_item
     - PORT=5002
-    - LOCATION=Floor1b
+    - LOCATION=Floor1
     - ID=5
     image: generator
   generator_6_service:
@@ -74,7 +74,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_1_item
     - PORT=5002
-    - LOCATION=Floor1b
+    - LOCATION=Floor1
     - ID=6
     image: generator
   generator_7_service:
@@ -82,7 +82,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_1_item
     - PORT=5002
-    - LOCATION=Floor1b
+    - LOCATION=Floor1
     - ID=7
     image: generator
   generator_8_service:
@@ -90,7 +90,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_1_item
     - PORT=5002
-    - LOCATION=Floor1b
+    - LOCATION=Floor1
     - ID=8
     image: generator
   generator_9_service:
@@ -98,7 +98,7 @@ services:
     - INTERVAL=0.01
     - AGGREGATOR=aggregator_1_item
     - PORT=5002
-    - LOCATION=Floor1b
+    - LOCATION=Floor1
     - ID=9
     image: generator
   processor_0_service:
@@ -122,28 +122,28 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.37ms
+          delay: 1.4ms
       to_node: aggregator_0_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.32ms
+          delay: 1.34ms
       to_node: generator_0_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.32ms
+          delay: 1.42ms
       to_node: generator_1_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.29ms
+          delay: 1.47ms
       to_node: generator_2_node
     - bidirectional: true
       from_node: processor_0_node
@@ -157,7 +157,7 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.4ms
+          delay: 1.3ms
       to_node: generator_4_node
     - bidirectional: true
       from_node: processor_0_node
@@ -171,455 +171,455 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.35ms
+          delay: 1.3ms
       to_node: generator_5_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.41ms
+          delay: 1.71ms
       to_node: generator_6_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.23ms
+          delay: 1.36ms
       to_node: generator_7_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.33ms
+          delay: 1.39ms
       to_node: generator_8_node
     - bidirectional: true
       from_node: processor_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.44ms
+          delay: 1.39ms
       to_node: generator_9_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.95ms
+          delay: 1.0ms
       to_node: generator_0_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.09ms
+          delay: 1.06ms
       to_node: generator_1_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 0.98ms
-      to_node: generator_2_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.08ms
-      to_node: generator_3_node
     - bidirectional: true
       from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 1.01ms
-      to_node: generator_4_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.68ms
-      to_node: aggregator_1_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.71ms
-      to_node: generator_5_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.72ms
-      to_node: generator_6_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.76ms
-      to_node: generator_7_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.79ms
-      to_node: generator_8_node
-    - bidirectional: true
-      from_node: aggregator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.75ms
-      to_node: generator_9_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 0.97ms
-      to_node: generator_1_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 0.93ms
       to_node: generator_2_node
     - bidirectional: true
-      from_node: generator_0_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 1.05ms
       to_node: generator_3_node
     - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.07ms
-      to_node: generator_4_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.67ms
-      to_node: aggregator_1_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.65ms
-      to_node: generator_5_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.81ms
-      to_node: generator_6_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.85ms
-      to_node: generator_7_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.81ms
-      to_node: generator_8_node
-    - bidirectional: true
-      from_node: generator_0_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.79ms
-      to_node: generator_9_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.06ms
-      to_node: generator_2_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 0.97ms
-      to_node: generator_3_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.08ms
-      to_node: generator_4_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.71ms
-      to_node: aggregator_1_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.7ms
-      to_node: generator_5_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.83ms
-      to_node: generator_6_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.83ms
-      to_node: generator_7_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.78ms
-      to_node: generator_8_node
-    - bidirectional: true
-      from_node: generator_1_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.7ms
-      to_node: generator_9_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.1ms
-      to_node: generator_3_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.1ms
-      to_node: generator_4_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.73ms
-      to_node: aggregator_1_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.69ms
-      to_node: generator_5_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.66ms
-      to_node: generator_6_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.7ms
-      to_node: generator_7_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.76ms
-      to_node: generator_8_node
-    - bidirectional: true
-      from_node: generator_2_node
-      properties:
-        bandwidth: 1000Mbps
-        latency:
-          delay: 1.71ms
-      to_node: generator_9_node
-    - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 1.03ms
       to_node: generator_4_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.71ms
+          delay: 1.11ms
       to_node: aggregator_1_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.78ms
+          delay: 1.02ms
       to_node: generator_5_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.64ms
+          delay: 1.03ms
       to_node: generator_6_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.66ms
+          delay: 1.05ms
       to_node: generator_7_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.63ms
+          delay: 1.16ms
       to_node: generator_8_node
     - bidirectional: true
-      from_node: generator_3_node
+      from_node: aggregator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.72ms
+          delay: 1.03ms
       to_node: generator_9_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.67ms
+          delay: 1.0ms
+      to_node: generator_1_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.03ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.93ms
+      to_node: generator_3_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.0ms
+      to_node: generator_4_node
+    - bidirectional: true
+      from_node: generator_0_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.99ms
       to_node: aggregator_1_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.72ms
+          delay: 1.01ms
       to_node: generator_5_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.66ms
+          delay: 1.1ms
       to_node: generator_6_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.74ms
+          delay: 1.0ms
       to_node: generator_7_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.71ms
+          delay: 0.95ms
       to_node: generator_8_node
     - bidirectional: true
-      from_node: generator_4_node
+      from_node: generator_0_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.64ms
+          delay: 1.02ms
       to_node: generator_9_node
     - bidirectional: true
-      from_node: aggregator_1_node
+      from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.04ms
+          delay: 1.11ms
+      to_node: generator_2_node
+    - bidirectional: true
+      from_node: generator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.13ms
+      to_node: generator_3_node
+    - bidirectional: true
+      from_node: generator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.06ms
+      to_node: generator_4_node
+    - bidirectional: true
+      from_node: generator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.96ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: generator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.03ms
       to_node: generator_5_node
     - bidirectional: true
-      from_node: aggregator_1_node
+      from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.04ms
+          delay: 0.97ms
       to_node: generator_6_node
     - bidirectional: true
-      from_node: aggregator_1_node
+      from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.12ms
+          delay: 1.17ms
       to_node: generator_7_node
     - bidirectional: true
-      from_node: aggregator_1_node
+      from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 1.0ms
       to_node: generator_8_node
     - bidirectional: true
-      from_node: aggregator_1_node
+      from_node: generator_1_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.96ms
+          delay: 1.01ms
       to_node: generator_9_node
     - bidirectional: true
-      from_node: generator_5_node
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.02ms
+      to_node: generator_3_node
+    - bidirectional: true
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.07ms
+      to_node: generator_4_node
+    - bidirectional: true
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.94ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.12ms
+      to_node: generator_5_node
+    - bidirectional: true
+      from_node: generator_2_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 1.06ms
       to_node: generator_6_node
     - bidirectional: true
-      from_node: generator_5_node
+      from_node: generator_2_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.98ms
+          delay: 1.03ms
       to_node: generator_7_node
+    - bidirectional: true
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.02ms
+      to_node: generator_8_node
+    - bidirectional: true
+      from_node: generator_2_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.08ms
+      to_node: generator_9_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.01ms
+      to_node: generator_4_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.96ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.01ms
+      to_node: generator_5_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.02ms
+      to_node: generator_6_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.05ms
+      to_node: generator_7_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.03ms
+      to_node: generator_8_node
+    - bidirectional: true
+      from_node: generator_3_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.99ms
+      to_node: generator_9_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.12ms
+      to_node: aggregator_1_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.05ms
+      to_node: generator_5_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.02ms
+      to_node: generator_6_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.07ms
+      to_node: generator_7_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.96ms
+      to_node: generator_8_node
+    - bidirectional: true
+      from_node: generator_4_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.08ms
+      to_node: generator_9_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.07ms
+      to_node: generator_5_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.01ms
+      to_node: generator_6_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.06ms
+      to_node: generator_7_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.06ms
+      to_node: generator_8_node
+    - bidirectional: true
+      from_node: aggregator_1_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.97ms
+      to_node: generator_9_node
     - bidirectional: true
       from_node: generator_5_node
       properties:
         bandwidth: 1000Mbps
         latency:
           delay: 0.97ms
+      to_node: generator_6_node
+    - bidirectional: true
+      from_node: generator_5_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 0.95ms
+      to_node: generator_7_node
+    - bidirectional: true
+      from_node: generator_5_node
+      properties:
+        bandwidth: 1000Mbps
+        latency:
+          delay: 1.09ms
       to_node: generator_8_node
     - bidirectional: true
       from_node: generator_5_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.05ms
+          delay: 1.0ms
       to_node: generator_9_node
     - bidirectional: true
       from_node: generator_6_node
@@ -633,35 +633,35 @@ x-fogify:
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.01ms
+          delay: 0.95ms
       to_node: generator_8_node
     - bidirectional: true
       from_node: generator_6_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 0.99ms
+          delay: 0.98ms
       to_node: generator_9_node
     - bidirectional: true
       from_node: generator_7_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.11ms
+          delay: 0.96ms
       to_node: generator_8_node
     - bidirectional: true
       from_node: generator_7_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.06ms
+          delay: 1.0ms
       to_node: generator_9_node
     - bidirectional: true
       from_node: generator_8_node
       properties:
         bandwidth: 1000Mbps
         latency:
-          delay: 1.07ms
+          delay: 1.0ms
       to_node: generator_9_node
     name: internet
     uplink:
@@ -678,8 +678,8 @@ x-fogify:
   - capabilities:
       memory: 256.000M
       processor:
-        clock_speed: 100
-        cores: 1
+        clock_speed: 300
+        cores: 2
     name: aggregator_0_node
   - capabilities:
       memory: 128.000M
@@ -714,8 +714,8 @@ x-fogify:
   - capabilities:
       memory: 256.000M
       processor:
-        clock_speed: 100
-        cores: 1
+        clock_speed: 300
+        cores: 2
     name: aggregator_1_node
   - capabilities:
       memory: 128.000M
