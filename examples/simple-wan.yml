@@ -1,0 +1,32 @@
+# Floor has Wireless network latency, as defined in ether
+
+global:
+  generator:
+    cores: 1
+    clock: 100
+    mem: 128Mi
+  aggregator:
+    cores: 1
+    clock: 100
+    mem: 256Mi
+  processor:
+    cores: 2
+    clock: 100
+    mem: 256Mi
+  app:
+    interval: 0.1
+    history: 10
+    window: 10
+    busy_wait: 1000000
+scenario:
+  Athens:
+    Factory1:
+      host_port: 5005
+      floors:
+        Floor1:
+          aggregators:
+            Aggregator1: 10
+          latency:
+            sigma: 0.635
+            loc: 1.18
+            scale: 3.27

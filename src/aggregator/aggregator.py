@@ -38,11 +38,13 @@ class Aggregator:
         s = sum(x['temperature'] for x in self.elements[id])
         l = len(self.elements[id])
         median = s/l
+        first = self.elements[id][0]
         last = self.elements[id][-1]
         for _ in range(self.busy_wait):
             pass
         data = {
             'location' : last['location'],
+            'timestamp_first_generated' : first['timestamp_generated'],
             'timestamp_last_generated' : last['timestamp_generated'],
             'timestamp_last_aggregated' : last['timestamp_aggregated'],
             'timestamp_computed': time(),
@@ -52,9 +54,7 @@ class Aggregator:
         self.elements[id] = []
         return data
     def post(self, data):
-        print(data)
         post(self.processor.url(), json=data)
-
 
 
 p = Aggregator()
@@ -68,9 +68,7 @@ def listen():
     data = request.get_json()
     data['timestamp_aggregated'] = time()
     id = int(data['id'])
-    print(data)
     p.listen(id, data)
-    # print(p.elements)
 
     return {}
 

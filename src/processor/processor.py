@@ -63,6 +63,17 @@ class Processor:
     def computation(self, id):
         return self.aggregate(id, 'computation')
 
+    def span(self, id):
+        return self.aggregate(id, 'span')
+
+    def diagnose(self, id):
+        return {
+            'delay': self.aggregate(id, 'delay'),
+            'computation': self.aggregate(id, 'computation'),
+            'span': self.aggregate(id, 'span'),
+        }
+
+
 
 a = Processor()
 app = Flask(__name__)
@@ -73,6 +84,7 @@ def listen():
     data = request.get_json()
     data['timestamp_arrived'] = time()
     data['delay'] = time() - data['timestamp_last_generated']
+    data['span'] = time() - data['timestamp_first_generated']
     data['computation'] = data['timestamp_computed'] - data['timestamp_last_aggregated']
     id = int(data['id'])
     a.listen(id, data)
@@ -156,6 +168,24 @@ def computation_generator():
 @app.route('/computation/all', methods = ['GET'])
 def computation_all():
     return attr_all('computation')
+
+@app.route('/span', methods = ['GET'])
+def span_generator():
+    return attr_generator('span')
+
+
+@app.route('/span/all', methods = ['GET'])
+def span_all():
+    return attr_all('span')
+
+@app.route('/diagnose', methods = ['GET'])
+def diagnose_generator():
+    return attr_generator('diagnose')
+
+
+@app.route('/diagnose/all', methods = ['GET'])
+def diagnose_all():
+    return attr_all('diagnose')
 
 
 @app.route('/graph', methods = ['GET'])

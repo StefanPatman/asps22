@@ -4,7 +4,7 @@ from typing import Dict
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
 from ether.blocks.nodes import create_node
-from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp, counters
+from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp
 from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic

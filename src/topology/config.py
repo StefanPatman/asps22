@@ -4,7 +4,7 @@ from itertools import combinations
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
 from ether.blocks.nodes import create_node
-from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp, counters
+from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp
 from ether.cell import LANCell, SharedLinkCell, UpDownLink
 from ether.topology import Topology
 from ether.vis import draw_basic
@@ -73,6 +73,7 @@ def create_service_aggregator(node):
 def create_service_processor(node):
     id = node.labels['asps.id']
     history = node.labels['asps.history']
+    host_port = node.labels['asps.host_port']
     return {
         'image': 'processor',
         'environment': [
@@ -81,7 +82,7 @@ def create_service_processor(node):
             f'ID={id}',
         ],
         'ports': [
-            5003
+            5003 if not host_port else f'{host_port}:5003'
         ]
     }
 

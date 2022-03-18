@@ -114,9 +114,10 @@ class Floor(LANCell):
 
 class Factory(LANCell):
 
-    def __init__(self, label, floors, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, floors, host_port=None, backhaul=None, config=CONFIG) -> None:
         self.label=label
         self.config=config
+        self.host_port=host_port
         cloudlet_nodes = [
             self._create_floor_gen(floor, desc)
             for floor, desc in floors.items()
@@ -140,6 +141,7 @@ class Factory(LANCell):
             labels={
             'ether.edgerun.io/type': 'server',
             'ether.edgerun.io/model': 'server',
+            'asps.host_port': self.host_port,
             'asps.history': self.config['app']['history'],
             'asps.service': 'processor',
             'asps.id': self.processor_id,
@@ -166,9 +168,10 @@ class City:
         city = LANCell([], backhaul=BusinessIsp(self.internet))
         city.materialize(topology)
 
-        for factory, floors in self.factories.items():
-
-            cloudlet = Factory(factory, floors, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
+        for factory, desc in self.factories.items():
+            floors = desc['floors']
+            host_port = desc.get('host_port', 0)
+            cloudlet = Factory(factory, floors, host_port=host_port, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
             cloudlet.materialize(topology)
 
 def create_topology(input, config):

@@ -1,4 +1,4 @@
-# Unfogified manual deployment
+# Unfogified deployment using docker-compose
 
 version: "3.7"
 
