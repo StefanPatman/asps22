@@ -23,6 +23,10 @@ scenario:
   Athens:
     Factory1:
       host_port: 5005
+      latency:
+        sigma: 0.25
+        loc: 0.50
+        scale: 0.0001
       floors:
         Floor1:
           aggregators:

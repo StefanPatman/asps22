@@ -106,8 +106,8 @@ def create_services(topology):
 
 def create_link(l):
     return {
-        'from_node': _name_node(l.m),
-        'to_node': _name_node(l.n),
+        'from_node': _name_item(l.m),
+        'to_node': _name_item(l.n),
         'bidirectional': True,
         'properties': {
             'bandwidth': f'{l.bandwidth}Mbps',

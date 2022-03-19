@@ -5,13 +5,16 @@ from itertools import chain
 import matplotlib.pyplot as plt
 
 from srds import ParameterizedDistribution as PDist
+from collections import defaultdict, Iterable
+from typing import Callable, List, Union
 
 from ether.core import Connection, Node, Capacity
 from ether.blocks import nodes
 from ether.blocks.cells import IoTComputeBox, Cloudlet, BusinessIsp, counters
-from ether.cell import LANCell, SharedLinkCell, UpDownLink
+from ether.cell import LANCell, SharedLinkCell, UpDownLink, Host
 from ether.topology import Topology
 from ether.vis import draw_basic
+from ether.qos import latency
 
 from config import create_config
 from extensions import create_node_multicore
@@ -43,11 +46,12 @@ CONFIG = {
 
 class Floor(LANCell):
 
-    def __init__(self, label, factory, aggregators, latency, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, factory, aggregators, latency, factory_latency, backhaul=None, config=CONFIG) -> None:
         self.label=label
         self.config = config
         self.factory = factory
         self.aggregators = aggregators
+        self.factory_latency = factory_latency
         self.latency = PDist.lognorm((latency['sigma'], latency['loc'], latency['scale']))
         nodes = [self._create_aggregator_group(a, g) for a, g in aggregators.items()]
         super().__init__(chain(nodes), backhaul=backhaul)
@@ -57,6 +61,25 @@ class Floor(LANCell):
         self.name = f'floor_{self.nr}'
         self.switch = f'switch_{self.name}'
 
+    def _materialize(self, topology: Topology, c: object, backhaul=None):
+        if isinstance(c, Iterable):
+            for elem in c:
+                self._materialize(topology, elem, backhaul)
+            return
+
+        if callable(c):
+            c = c()
+
+        if isinstance(c, Node):
+            c = Host(c, backhaul=backhaul)
+            c.materialize(topology, self, latency_dist=self.latency)
+            return
+        elif isinstance(c, Cell):
+            if backhaul:
+                c.backhaul = backhaul
+
+        c.materialize(topology, self)
+
     def materialize(self, topology: Topology, parent=None):
         self._create_identity()
 
@@ -64,7 +87,7 @@ class Floor(LANCell):
             self._materialize(topology, cell, self.switch)
 
         if self.backhaul:
-            topology.add_connection(Connection(self.switch, self.backhaul, latency_dist=self.latency))
+            topology.add_connection(Connection(self.switch, self.backhaul, latency_dist=self.factory_latency))
 
     def _create_aggregator_group(self, aggregator_name, generator_count):
 
@@ -114,9 +137,10 @@ class Floor(LANCell):
 
 class Factory(LANCell):
 
-    def __init__(self, label, floors, host_port=None, backhaul=None, config=CONFIG) -> None:
+    def __init__(self, label, floors, latency, host_port=None, backhaul=None, config=CONFIG) -> None:
         self.label=label
         self.config=config
+        self.latency = PDist.lognorm((latency['sigma'], latency['loc'], latency['scale']))
         self.host_port=host_port
         cloudlet_nodes = [
             self._create_floor_gen(floor, desc)
@@ -151,7 +175,7 @@ class Factory(LANCell):
         aggregators = desc['aggregators']
         latency = desc['latency']
         def _create_floor():
-            return Floor(floor, self, aggregators, latency, backhaul=self.switch, config=self.config)
+            return Floor(floor, self, aggregators, latency, factory_latency=self.latency, backhaul=self.switch, config=self.config)
         return _create_floor
 
 
@@ -170,8 +194,9 @@ class City:
 
         for factory, desc in self.factories.items():
             floors = desc['floors']
+            latency = desc['latency']
             host_port = desc.get('host_port', 0)
-            cloudlet = Factory(factory, floors, host_port=host_port, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
+            cloudlet = Factory(factory, floors, latency, host_port=host_port, backhaul=UpDownLink(10000, 10000, backhaul=city.switch), config=self.config)
             cloudlet.materialize(topology)
 
 def create_topology(input, config):
