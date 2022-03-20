@@ -1,0 +1,66 @@
+# The generators are divided in two groups within the same network
+
+global:
+  generator:
+    cores: 1
+    clock: 100
+    mem: 128Mi
+  aggregator:
+    cores: 1
+    clock: 100
+    mem: 256Mi
+  processor:
+    cores: 2
+    clock: 100
+    mem: 256Mi
+  app:
+    interval: 0.01
+    history: 10
+    window: 100
+    busy_wait: 1000000
+scenario:
+  Athens:
+    Factory1:
+      host_port: 5005
+      latency:
+        sigma: 0.25
+        loc: 0.50
+        scale: 0.0001
+      floors:
+        Floor1:
+          aggregators:
+            Aggregator1: 5
+            Aggregator2: 5
+          latency:
+            sigma: 0.25
+            loc: 0.35
+            scale: 0.0001
+        Floor2:
+          aggregators:
+            Aggregator1: 5
+            Aggregator2: 5
+          latency:
+            sigma: 0.635
+            loc: 1.18
+            scale: 3.27
+    Factory2:
+      host_port: 5005
+      latency:
+        sigma: 0.25
+        loc: 0.50
+        scale: 0.0001
+      floors:
+        Floor1:
+          aggregators:
+            Aggregator1: 10
+          latency:
+            sigma: 0.25
+            loc: 0.35
+            scale: 0.0001
+        Floor2:
+          aggregators:
+            Aggregator1: 10
+          latency:
+            sigma: 0.635
+            loc: 1.18
+            scale: 3.27
